@@ -1,0 +1,35 @@
+#!/bin/sh 
+
+exec 2> /tmp/rc.local.log
+exec 1>&2
+set -x
+
+sleep 5
+
+#/usr/sbin/ntpdate cn.pool.ntp.org
+/usr/local/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf -d
+flag=0
+while [ $flag -eq 0 ];
+do
+	ping -c 1 www.baidu.com
+	if [ $? -eq 0 ]; then
+		echo "ping baidu success!"
+		flag=1
+	else
+		echo "ping baidu failed! network ERR!"
+	fi
+done
+echo "Changingusbmode..."
+echo host > /sys/kernel/debug/usb/ci_hdrc.0/role
+
+sleep 5
+/usr/sbin/fdisk -l 
+/usr/bin/mount /dev/sda1 /home/user/sdCard/
+
+sleep 5
+#/home/user/localStream.sh
+
+
+exit 0
+
+
